@@ -1,7 +1,7 @@
 
 /*
  * *** YOUR NAME GOES HERE / YOUR SECTION NUMBER ***
- *
+ *     Philip Garbis   /  COMP 272-002
  * This java file is a Java object implementing simple AVL Tree.
  * You are to complete the deleteElement method.
  *
@@ -361,6 +361,54 @@ class LUC_AVLTree {
          * code for each. You can also look at the method InsertElement, as it has do
          * do many of the same things as this method.
          */
+
+        if (node == null) {
+            return node; // Base case: Value not found
+        }
+        // Step 1: Perform standard BST deletion
+        if (value < node.value) {
+            node.leftChild = deleteElement(value, node.leftChild);
+        } else if (value > node.value) {
+            node.rightChild = deleteElement(value, node.rightChild);
+        } else {
+            // Node found - handle deletion cases
+            
+            // Case 1: Node with only one child or no child
+            if (node.leftChild == null) {
+                return node.rightChild;
+            } else if (node.rightChild == null) {
+                return node.leftChild;
+            }
+
+            // Case 2: Node with two children
+            Node temp = minValueNode(node.rightChild); // Inorder successor
+            node.value = temp.value; // Copy value
+            node.rightChild = deleteElement(temp.value, node.rightChild); // Delete successor
+        }
+
+        // Step 2: Update height
+        node.height = getMaxHeight(getHeight(node.leftChild), getHeight(node.rightChild)) + 1;
+
+        // Step 3: Rebalance if needed
+        int balance = getBalanceFactor(node);
+
+        // Left Heavy
+        if (balance > 1) {
+            if (getBalanceFactor(node.leftChild) >= 0) {
+                return LLRotation(node);
+            } else {
+                return LRRotation(node);
+            }
+        }
+
+        // Right Heavy
+        if (balance < -1) {
+            if (getBalanceFactor(node.rightChild) <= 0) {
+                return RRRotation(node);
+            } else {
+                return RLRotation(node);
+            }
+        }
 
         return node;
     }
